@@ -2,6 +2,14 @@
 
 この CLI と GitHub Action の変更点です。書き方は [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/)、版の付け方は [Semantic Versioning](https://semver.org/lang/ja/) に従います。
 
+## [1.0.2] - 2026-10-12
+
+### Changed
+
+- npm の包みの `homepage` を <https://leafchat.app> にし、`keywords` を足した
+- README の冒頭に leafchat の説明と、npm・GitHub Marketplace・API の仕様書へのリンクを足した。API キーを発行する画面の場所を『ワークスペース』→『API キー』に直した（SECURITY.md も）
+- leafchat の API の型を、今の仕様書から作り直した。コマンドと Action の動きは変わらない
+
 ## [1.0.1] - 2026-10-05
 
 ### Fixed

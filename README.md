@@ -2,6 +2,12 @@
 
 フォルダに置いた資料（Markdown・PDF・Word など）を、[leafchat](https://leafchat.app) のナレッジに同期するコマンドと GitHub Action です。置いた場所がそのまま leafchat のフォルダになります。どの CI からも、手元からも使えます。GitHub では、pull request に計画をコメントし、`main` への push で反映する Action を使えます（[GitHub Action](#github-action)）。
 
+leafchat は、サイトに設置する AI サポートチャットです。登録した資料をもとに AI が訪問者の質問に答え、答えられなかった質問は担当者が会話を引き継ぎます。資料を Git で管理すると、変更を pull request で確かめてから AI の回答に反映できます。
+
+- npm：[`@leafchat/cli`](https://www.npmjs.com/package/@leafchat/cli)
+- GitHub Marketplace：[leafchat knowledge sync](https://github.com/marketplace/actions/leafchat-knowledge-sync)
+- leafchat の API の仕様書：<https://api.leafchat.app/api/v1/docs>（同期の API もここにあります）
+
 ```bash
 npx @leafchat/cli sync check ./knowledge                                            # 送る前の検査だけ（鍵は要らない）
 LEAFCHAT_API_KEY=lck_… npx @leafchat/cli sync plan  ./knowledge --source <ソースの ID>  # サーバーの計画を見る（何も変えない）
@@ -125,7 +131,7 @@ leafchat の同期の計画  ソース <ソースの ID>
 
 ## GitHub Action
 
-pull request では計画を PR にコメントし、`main` への push で反映します。`uses:` は、版のタグではなく**コミットの SHA で固定**してください（タグは付け替えられるため。SHA は [Releases](https://github.com/leafchat/cli/releases) の各版のコミットで確かめられます）。
+pull request では計画を PR にコメントし、`main` への push で反映します。GitHub Marketplace に [leafchat knowledge sync](https://github.com/marketplace/actions/leafchat-knowledge-sync) として載せています。`uses:` は、版のタグではなく**コミットの SHA で固定**してください（タグは付け替えられるため。SHA は [Releases](https://github.com/leafchat/cli/releases) の各版のコミットで確かめられます）。
 
 ### pull request で計画を見る
 

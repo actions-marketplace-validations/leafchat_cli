@@ -21130,7 +21130,7 @@ function appliedText(counts) {
 }
 
 // src/cli/version.ts
-var CLI_VERSION = true ? "1.0.1" : "0.0.0-dev";
+var CLI_VERSION = true ? "1.0.2" : "0.0.0-dev";
 
 // src/infrastructure/ci-env.ts
 var REPOSITORY_PATTERN2 = /^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/;
