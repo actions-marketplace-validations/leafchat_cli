@@ -12,33 +12,7 @@ export interface paths {
             cookie?: never;
         };
         /** ソースの一覧 */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description 組織のソース（既定のソースが先頭） */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            sources: components["schemas"]["Source"][];
-                        };
-                    };
-                };
-                400: components["responses"]["InvalidRequest"];
-                401: components["responses"]["Unauthorized"];
-                403: components["responses"]["Forbidden"];
-                404: components["responses"]["NotFound"];
-                429: components["responses"]["RateLimited"];
-            };
-        };
+        get: operations["list_knowledge_sources"];
         put?: never;
         post?: never;
         delete?: never;
@@ -55,33 +29,7 @@ export interface paths {
             cookie?: never;
         };
         /** ソースの取得 */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    source_id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description ソース */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["Source"];
-                    };
-                };
-                400: components["responses"]["InvalidRequest"];
-                401: components["responses"]["Unauthorized"];
-                403: components["responses"]["Forbidden"];
-                404: components["responses"]["NotFound"];
-                429: components["responses"]["RateLimited"];
-            };
-        };
+        get: operations["get_knowledge_source"];
         put?: never;
         post?: never;
         delete?: never;
@@ -119,42 +67,7 @@ export interface paths {
          *
          *     変更点（files を足したとき）：external_id の規則を、日本語のパスを入れられる形（UTF-8 で 512 バイトまで・NFC・`/` 区切り）へ広げた。items の external_id と confirmed_deletes も同じ規則で受け、今まで通っていた ID はすべてそのまま通る。応答の folder_id・to_folder_id は、files で作るフォルダのときだけ null になる（items では常に文字列）。plan.rename と executed[].kind の rename は files で送ったときだけ出る（items では plan.rename は常に空）。ソースの last_sync_summary に renamed を足した。warnings の要素は code で形が分かれる（same_filename_across_folders・chunk_boundary）。
          */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    source_id: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["SyncRequest"];
-                };
-            };
-            responses: {
-                /** @description 計画と、実行した操作 */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["SyncResponse"];
-                    };
-                };
-                400: components["responses"]["InvalidRequest"];
-                401: components["responses"]["Unauthorized"];
-                403: components["responses"]["Forbidden"];
-                404: components["responses"]["NotFound"];
-                409: components["responses"]["Conflict"];
-                413: components["responses"]["PayloadTooLarge"];
-                415: components["responses"]["UnsupportedMediaType"];
-                422: components["responses"]["Unprocessable"];
-                429: components["responses"]["RateLimited"];
-                502: components["responses"]["BadGateway"];
-            };
-        };
+        post: operations["sync_knowledge_source"];
         delete?: never;
         options?: never;
         head?: never;
@@ -177,59 +90,7 @@ export interface paths {
          *
          *     同じファイルを 2 度上げると、2 度目は 200 で何もしない。受け取ったファイルは 24 時間で消える（その間に実行の同期を呼ぶ）。
          */
-        put: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    source_id: string;
-                    /** @description ファイルの中身の SHA-256（16 進の小文字） */
-                    sha256: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "text/plain": string;
-                    "text/markdown": string;
-                    "application/json": string;
-                    "text/html": string;
-                    "text/csv": string;
-                    "application/pdf": string;
-                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": string;
-                };
-            };
-            responses: {
-                /** @description 受け取り済み（何もしない） */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["UploadAccepted"];
-                    };
-                };
-                /** @description 受け取った */
-                201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["UploadAccepted"];
-                    };
-                };
-                400: components["responses"]["InvalidRequest"];
-                401: components["responses"]["Unauthorized"];
-                403: components["responses"]["Forbidden"];
-                404: components["responses"]["NotFound"];
-                409: components["responses"]["Conflict"];
-                411: components["responses"]["LengthRequired"];
-                413: components["responses"]["PayloadTooLarge"];
-                415: components["responses"]["UnsupportedMediaType"];
-                422: components["responses"]["Unprocessable"];
-                429: components["responses"]["RateLimited"];
-            };
-        };
+        put: operations["upload_knowledge_source_file"];
         post?: never;
         delete?: never;
         options?: never;
@@ -248,33 +109,7 @@ export interface paths {
          * フォルダの一覧
          * @description 既定のフォルダが先頭。is_global のフォルダはすべてのサイトから参照され、それ以外は sites に挙げたサイトだけが参照する
          */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description 組織のフォルダ */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            folders: components["schemas"]["Folder"][];
-                        };
-                    };
-                };
-                400: components["responses"]["InvalidRequest"];
-                401: components["responses"]["Unauthorized"];
-                403: components["responses"]["Forbidden"];
-                404: components["responses"]["NotFound"];
-                429: components["responses"]["RateLimited"];
-            };
-        };
+        get: operations["list_knowledge_folders"];
         put?: never;
         post?: never;
         delete?: never;
@@ -294,43 +129,7 @@ export interface paths {
          * 文書の一覧
          * @description 作成の新しい順。next_cursor が null でなければ、cursor に入れて次のページを取る
          */
-        get: {
-            parameters: {
-                query?: {
-                    source_id?: string;
-                    folder_id?: string;
-                    /** @description source_id と一緒のときだけ指定できる */
-                    external_id?: string;
-                    status?: "processing" | "pending" | "ready" | "error";
-                    /** @description 前の応答の next_cursor */
-                    cursor?: string;
-                    limit?: number;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description 文書の 1 ページ */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            documents: components["schemas"]["Document"][];
-                            next_cursor: string | null;
-                        };
-                    };
-                };
-                400: components["responses"]["InvalidRequest"];
-                401: components["responses"]["Unauthorized"];
-                403: components["responses"]["Forbidden"];
-                404: components["responses"]["NotFound"];
-                429: components["responses"]["RateLimited"];
-            };
-        };
+        get: operations["list_knowledge_documents"];
         put?: never;
         /**
          * 文書の作成
@@ -340,54 +139,7 @@ export interface paths {
          *
          *     本文の上限は JSON 6 MiB・multipart 16 MiB。テキストは分割の上限が先に効き、実際は約 1.5 MiB まで。
          */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": components["schemas"]["CreateDocument"];
-                    "multipart/form-data": components["schemas"]["CreateDocumentMultipart"];
-                };
-            };
-            responses: {
-                /** @description 同じ外部 ID・同じ内容の文書が既にあった */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["DocumentAccepted"];
-                    };
-                };
-                /** @description 受け付けた。反映の状態は Location の文書で確かめる */
-                202: {
-                    headers: {
-                        /** @description 文書の URL */
-                        Location?: string;
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["DocumentAccepted"];
-                    };
-                };
-                400: components["responses"]["InvalidRequest"];
-                401: components["responses"]["Unauthorized"];
-                403: components["responses"]["Forbidden"];
-                404: components["responses"]["NotFound"];
-                409: components["responses"]["Conflict"];
-                412: components["responses"]["PreconditionFailed"];
-                413: components["responses"]["PayloadTooLarge"];
-                415: components["responses"]["UnsupportedMediaType"];
-                422: components["responses"]["Unprocessable"];
-                428: components["responses"]["PreconditionRequired"];
-                429: components["responses"]["RateLimited"];
-                503: components["responses"]["ServiceUnavailable"];
-            };
-        };
+        post: operations["create_knowledge_document"];
         delete?: never;
         options?: never;
         head?: never;
@@ -405,78 +157,14 @@ export interface paths {
          * 文書の取得
          * @description 反映の状態は current_revision（公開中の版）と head_revision（最新の版）で確かめる。書き込みの応答の revision_id が current_revision.id になれば公開されている
          */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    document_id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description 文書 */
-                200: {
-                    headers: {
-                        /** @description "<版の ID>"。If-Match にそのまま入れる */
-                        ETag?: string;
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["Document"];
-                    };
-                };
-                400: components["responses"]["InvalidRequest"];
-                401: components["responses"]["Unauthorized"];
-                403: components["responses"]["Forbidden"];
-                404: components["responses"]["NotFound"];
-                429: components["responses"]["RateLimited"];
-            };
-        };
+        get: operations["get_knowledge_document"];
         put?: never;
         post?: never;
         /**
          * 文書の削除
          * @description 削除を受け付け、実体は裏で消す。消した文書をもう一度消すと、削除の起票が保守の GC で消えるまでは already_deleted、その後は 404
          */
-        delete: {
-            parameters: {
-                query?: never;
-                header?: {
-                    /** @description GET で受け取った ETag（"<版の ID>"）。強い比較の 1 つの値だけを受ける */
-                    "if-match"?: string;
-                };
-                path: {
-                    document_id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description 削除を受け付けた */
-                202: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["DeleteResult"];
-                    };
-                };
-                400: components["responses"]["InvalidRequest"];
-                401: components["responses"]["Unauthorized"];
-                403: components["responses"]["Forbidden"];
-                404: components["responses"]["NotFound"];
-                409: components["responses"]["Conflict"];
-                412: components["responses"]["PreconditionFailed"];
-                413: components["responses"]["PayloadTooLarge"];
-                415: components["responses"]["UnsupportedMediaType"];
-                422: components["responses"]["Unprocessable"];
-                428: components["responses"]["PreconditionRequired"];
-                429: components["responses"]["RateLimited"];
-                503: components["responses"]["ServiceUnavailable"];
-            };
-        };
+        delete: operations["delete_knowledge_document"];
         options?: never;
         head?: never;
         /**
@@ -489,56 +177,7 @@ export interface paths {
          *
          *     - ソース：source_id（同期のソースへ移すときは external_id も）
          */
-        patch: {
-            parameters: {
-                query?: never;
-                header?: {
-                    /** @description GET で受け取った ETag（"<版の ID>"）。強い比較の 1 つの値だけを受ける */
-                    "if-match"?: string;
-                };
-                path: {
-                    document_id: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["PatchDocument"];
-                };
-            };
-            responses: {
-                /** @description フォルダ・ソースを変えた（文書を返す）。本文が同じで版を作らなかったときは DocumentAccepted（created: false） */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["Document"] | components["schemas"]["DocumentAccepted"];
-                    };
-                };
-                /** @description 本文の変更を受け付けた */
-                202: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["DocumentAccepted"];
-                    };
-                };
-                400: components["responses"]["InvalidRequest"];
-                401: components["responses"]["Unauthorized"];
-                403: components["responses"]["Forbidden"];
-                404: components["responses"]["NotFound"];
-                409: components["responses"]["Conflict"];
-                412: components["responses"]["PreconditionFailed"];
-                413: components["responses"]["PayloadTooLarge"];
-                415: components["responses"]["UnsupportedMediaType"];
-                422: components["responses"]["Unprocessable"];
-                428: components["responses"]["PreconditionRequired"];
-                429: components["responses"]["RateLimited"];
-                503: components["responses"]["ServiceUnavailable"];
-            };
-        };
+        patch: operations["update_knowledge_document"];
         trace?: never;
     };
     "/knowledge/documents/{document_id}/content": {
@@ -552,38 +191,7 @@ export interface paths {
          * 文書の原本
          * @description revision_id が無ければ公開中の版の原本を返す。公開中の版がまだ無い文書は 404（revision_id で版を指定する）
          */
-        get: {
-            parameters: {
-                query?: {
-                    /** @description 無ければ公開中の版 */
-                    revision_id?: string;
-                };
-                header?: never;
-                path: {
-                    document_id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description 原本のバイト列（Content-Disposition: attachment） */
-                200: {
-                    headers: {
-                        /** @description "<版の ID>"。If-Match にそのまま入れる */
-                        ETag?: string;
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/octet-stream": string;
-                    };
-                };
-                400: components["responses"]["InvalidRequest"];
-                401: components["responses"]["Unauthorized"];
-                403: components["responses"]["Forbidden"];
-                404: components["responses"]["NotFound"];
-                429: components["responses"]["RateLimited"];
-            };
-        };
+        get: operations["get_knowledge_document_content"];
         put?: never;
         post?: never;
         delete?: never;
@@ -603,35 +211,7 @@ export interface paths {
          * 版の履歴
          * @description 新しい順。以前の版は 20 版まで原本が残り、復元できる
          */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    document_id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description 版の一覧 */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            revisions: components["schemas"]["Revision"][];
-                        };
-                    };
-                };
-                400: components["responses"]["InvalidRequest"];
-                401: components["responses"]["Unauthorized"];
-                403: components["responses"]["Forbidden"];
-                404: components["responses"]["NotFound"];
-                429: components["responses"]["RateLimited"];
-            };
-        };
+        get: operations["list_knowledge_document_revisions"];
         put?: never;
         post?: never;
         delete?: never;
@@ -652,58 +232,7 @@ export interface paths {
          * 外部 ID で文書を作成・更新する
          * @description external_id は encodeURIComponent で符号化してパスに入れる（faq/shipping は faq%2Fshipping）。If-Match は任意で、指定すると head の版が違えば 412 になる
          */
-        put: {
-            parameters: {
-                query?: never;
-                header?: {
-                    /** @description GET で受け取った ETag（"<版の ID>"）。強い比較の 1 つの値だけを受ける */
-                    "if-match"?: string;
-                };
-                path: {
-                    source_id: string;
-                    /** @description encodeURIComponent で符号化して送る（faq/shipping は faq%2Fshipping）。サーバーは復号した値を検査する */
-                    external_id: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["UpsertDocument"];
-                };
-            };
-            responses: {
-                /** @description 内容が同じで、何も変えなかった */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["UpsertResult"];
-                    };
-                };
-                /** @description 作成か更新を受け付けた */
-                202: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["UpsertResult"];
-                    };
-                };
-                400: components["responses"]["InvalidRequest"];
-                401: components["responses"]["Unauthorized"];
-                403: components["responses"]["Forbidden"];
-                404: components["responses"]["NotFound"];
-                409: components["responses"]["Conflict"];
-                412: components["responses"]["PreconditionFailed"];
-                413: components["responses"]["PayloadTooLarge"];
-                415: components["responses"]["UnsupportedMediaType"];
-                422: components["responses"]["Unprocessable"];
-                428: components["responses"]["PreconditionRequired"];
-                429: components["responses"]["RateLimited"];
-                503: components["responses"]["ServiceUnavailable"];
-            };
-        };
+        put: operations["upsert_knowledge_document"];
         post?: never;
         delete?: never;
         options?: never;
@@ -724,53 +253,7 @@ export interface paths {
          * 以前の版に戻す
          * @description 指定した版の内容で新しい版を作る。If-Match は任意
          */
-        post: {
-            parameters: {
-                query?: never;
-                header?: {
-                    /** @description GET で受け取った ETag（"<版の ID>"）。強い比較の 1 つの値だけを受ける */
-                    "if-match"?: string;
-                };
-                path: {
-                    document_id: string;
-                    revision_id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description 今の版と同じ内容で、版を作らなかった */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["DocumentAccepted"];
-                    };
-                };
-                /** @description 新しい版を受け付けた */
-                202: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["DocumentAccepted"];
-                    };
-                };
-                400: components["responses"]["InvalidRequest"];
-                401: components["responses"]["Unauthorized"];
-                403: components["responses"]["Forbidden"];
-                404: components["responses"]["NotFound"];
-                409: components["responses"]["Conflict"];
-                412: components["responses"]["PreconditionFailed"];
-                413: components["responses"]["PayloadTooLarge"];
-                415: components["responses"]["UnsupportedMediaType"];
-                422: components["responses"]["Unprocessable"];
-                428: components["responses"]["PreconditionRequired"];
-                429: components["responses"]["RateLimited"];
-                503: components["responses"]["ServiceUnavailable"];
-            };
-        };
+        post: operations["restore_knowledge_document_revision"];
         delete?: never;
         options?: never;
         head?: never;
@@ -787,40 +270,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** 取り込みに失敗した最新の版を取り込み直す */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    document_id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description 取り込み直しを受け付けた */
-                202: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["RetryResult"];
-                    };
-                };
-                400: components["responses"]["InvalidRequest"];
-                401: components["responses"]["Unauthorized"];
-                403: components["responses"]["Forbidden"];
-                404: components["responses"]["NotFound"];
-                409: components["responses"]["Conflict"];
-                412: components["responses"]["PreconditionFailed"];
-                413: components["responses"]["PayloadTooLarge"];
-                415: components["responses"]["UnsupportedMediaType"];
-                422: components["responses"]["Unprocessable"];
-                428: components["responses"]["PreconditionRequired"];
-                429: components["responses"]["RateLimited"];
-                503: components["responses"]["ServiceUnavailable"];
-            };
-        };
+        post: operations["retry_knowledge_document"];
         delete?: never;
         options?: never;
         head?: never;
@@ -838,40 +288,7 @@ export interface paths {
          * 下書きの一覧
          * @description 作成の新しい順。state の既定は open（未処理）。next_cursor が null でなければ、cursor に入れて次のページを取る
          */
-        get: {
-            parameters: {
-                query?: {
-                    state?: "open" | "published" | "discarded";
-                    target_document_id?: string;
-                    /** @description 前の応答の next_cursor */
-                    cursor?: string;
-                    limit?: number;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description 下書きの 1 ページ */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            drafts: components["schemas"]["Draft"][];
-                            next_cursor: string | null;
-                        };
-                    };
-                };
-                400: components["responses"]["InvalidRequest"];
-                401: components["responses"]["Unauthorized"];
-                403: components["responses"]["Forbidden"];
-                404: components["responses"]["NotFound"];
-                429: components["responses"]["RateLimited"];
-            };
-        };
+        get: operations["list_knowledge_drafts"];
         put?: never;
         /**
          * 下書きを作る
@@ -885,43 +302,7 @@ export interface paths {
          *
          *     未処理の下書きは組織で 100 件まで（409 draft_limit_exceeded）。本文は 6 MiB まで。
          */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["CreateDraft"];
-                };
-            };
-            responses: {
-                /** @description 作った下書き */
-                201: {
-                    headers: {
-                        /** @description 作った下書きの URL */
-                        Location?: string;
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["Draft"];
-                    };
-                };
-                400: components["responses"]["InvalidRequest"];
-                401: components["responses"]["Unauthorized"];
-                403: components["responses"]["Forbidden"];
-                404: components["responses"]["NotFound"];
-                409: components["responses"]["Conflict"];
-                412: components["responses"]["PreconditionFailed"];
-                413: components["responses"]["PayloadTooLarge"];
-                415: components["responses"]["UnsupportedMediaType"];
-                422: components["responses"]["Unprocessable"];
-                429: components["responses"]["RateLimited"];
-                503: components["responses"]["ServiceUnavailable"];
-            };
-        };
+        post: operations["create_knowledge_draft"];
         delete?: never;
         options?: never;
         head?: never;
@@ -936,67 +317,14 @@ export interface paths {
             cookie?: never;
         };
         /** 下書きの取得 */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    draft_id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description 下書き */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["Draft"];
-                    };
-                };
-                400: components["responses"]["InvalidRequest"];
-                401: components["responses"]["Unauthorized"];
-                403: components["responses"]["Forbidden"];
-                404: components["responses"]["NotFound"];
-                429: components["responses"]["RateLimited"];
-            };
-        };
+        get: operations["get_knowledge_draft"];
         put?: never;
         post?: never;
         /**
          * 下書きを破棄する
          * @description 下書きを作った API キーだけが破棄できる。公開済み・破棄済みの下書きは 409 already_decided
          */
-        delete: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    draft_id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description 破棄した */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["DiscardResult"];
-                    };
-                };
-                400: components["responses"]["InvalidRequest"];
-                401: components["responses"]["Unauthorized"];
-                403: components["responses"]["Forbidden"];
-                404: components["responses"]["NotFound"];
-                409: components["responses"]["Conflict"];
-                429: components["responses"]["RateLimited"];
-            };
-        };
+        delete: operations["discard_knowledge_draft"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1013,33 +341,7 @@ export interface paths {
          * 下書きの提案の本文
          * @description 削除の下書きは本文を持たないので 404
          */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    draft_id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description 提案の本文（Content-Disposition: attachment） */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/octet-stream": string;
-                    };
-                };
-                400: components["responses"]["InvalidRequest"];
-                401: components["responses"]["Unauthorized"];
-                403: components["responses"]["Forbidden"];
-                404: components["responses"]["NotFound"];
-                429: components["responses"]["RateLimited"];
-            };
-        };
+        get: operations["get_knowledge_draft_content"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1053,10 +355,12 @@ export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         Problem: {
+            /** @description `urn:leafchat:problem:<code>` */
             type: string;
             title: string;
             status: number;
             detail?: string;
+            /** @description 誤りの種類。値と意味は、この文書の冒頭（info）の「誤りのコード」の表にある。値は増えることがあるので、知らない値は status で扱う */
             code: string;
         } & {
             [key: string]: unknown;
@@ -1265,7 +569,8 @@ export interface components {
             size: number | null;
             /** @enum {string} */
             status: "processing" | "pending" | "ready" | "error";
-            current_revision: components["schemas"]["RevisionRef"];
+            /** @description 公開中の版。公開した版がまだ無い文書では null */
+            current_revision: components["schemas"]["RevisionRef"] | null;
             head_revision: components["schemas"]["RevisionRef"];
             /**
              * Format: date-time
@@ -1289,7 +594,7 @@ export interface components {
              * @example 2026-09-29T02:31:07.000Z
              */
             created_at: string;
-        } | null;
+        };
         Revision: components["schemas"]["RevisionRef"] & {
             filename: string;
             mime: string;
@@ -1515,7 +820,11 @@ export interface components {
         };
     };
     responses: {
-        /** @description 要求の形式が正しくない。errors に項目（path）ごとの理由が入る */
+        /**
+         * @description 要求の形式か値が正しくない。errors（検証の誤り）に項目（path）ごとの理由が入る
+         *
+         *     返る code：`invalid_request`・`empty_manifest`・`duplicate_item`
+         */
         InvalidRequest: {
             headers: {
                 [name: string]: unknown;
@@ -1524,7 +833,11 @@ export interface components {
                 "application/problem+json": components["schemas"]["Problem"];
             };
         };
-        /** @description API キーが無いか無効（期限切れ・失効・削除の途中の組織を含み、理由は区別しない） */
+        /**
+         * @description API キーが無いか無効（期限切れ・失効・削除の途中の組織を含み、理由は区別しない）
+         *
+         *     返る code：`unauthorized`
+         */
         Unauthorized: {
             headers: {
                 [name: string]: unknown;
@@ -1533,7 +846,11 @@ export interface components {
                 "application/problem+json": components["schemas"]["Problem"];
             };
         };
-        /** @description この API キーの用途・対象のソースでは実行できない */
+        /**
+         * @description この API キーの用途か、対象のソースでは実行できない
+         *
+         *     返る code：`forbidden`・`needs_draft`
+         */
         Forbidden: {
             headers: {
                 [name: string]: unknown;
@@ -1542,7 +859,11 @@ export interface components {
                 "application/problem+json": components["schemas"]["Problem"];
             };
         };
-        /** @description 指定した ID が無い（他の組織の ID も同じ応答になる）。削除した文書は、削除の起票が保守の GC で消えるまで DELETE が already_deleted を返し、その後は 404 */
+        /**
+         * @description 指定した ID かパスが無い（ほかの組織の ID も同じ応答になる）。削除した文書は、削除の起票が保守の GC で消えるまで DELETE が already_deleted を返し、その後は 404
+         *
+         *     返る code：`not_found`
+         */
         NotFound: {
             headers: {
                 [name: string]: unknown;
@@ -1551,34 +872,11 @@ export interface components {
                 "application/problem+json": components["schemas"]["Problem"];
             };
         };
-        /** @description 本文が上限を超えた（JSON 6 MiB・multipart 16 MiB・同期 8 MiB・同期のアップロード 15 MB） */
-        PayloadTooLarge: {
-            headers: {
-                [name: string]: unknown;
-            };
-            content: {
-                "application/problem+json": components["schemas"]["Problem"];
-            };
-        };
-        /** @description Content-Length が無い */
-        LengthRequired: {
-            headers: {
-                [name: string]: unknown;
-            };
-            content: {
-                "application/problem+json": components["schemas"]["Problem"];
-            };
-        };
-        /** @description Content-Type が application/json・multipart/form-data でない */
-        UnsupportedMediaType: {
-            headers: {
-                [name: string]: unknown;
-            };
-            content: {
-                "application/problem+json": components["schemas"]["Problem"];
-            };
-        };
-        /** @description 今の状態と合わない（同期のソース・外部 ID の重複・上限・同期の実行中・leafchat に無いフォルダ・受け取っていないファイル・予約の無いアップロード・下書きの処理済みなど）。code で見分ける */
+        /**
+         * @description 今の状態と合わない。code で見分ける
+         *
+         *     返る code：`source_locked`・`limit_exceeded`・`delete_limit_exceeded`・`folder_not_found`・`folder_limit_exceeded`・`upload_required`・`upload_not_expected`・`sync_in_progress`・`not_sync_source`・`external_id_taken`・`draft_limit_exceeded`・`already_decided`・`not_retryable`
+         */
         Conflict: {
             headers: {
                 [name: string]: unknown;
@@ -1587,7 +885,24 @@ export interface components {
                 "application/problem+json": components["schemas"]["Problem"];
             };
         };
-        /** @description If-Match の版が今の head の版と違う */
+        /**
+         * @description Content-Length が無い
+         *
+         *     返る code：`invalid_request`
+         */
+        LengthRequired: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/problem+json": components["schemas"]["Problem"];
+            };
+        };
+        /**
+         * @description If-Match（下書きの作成では base_revision_id）の版が、今の head の版と違う。存在しない文書へ If-Match を付けた upsert でも返る
+         *
+         *     返る code：`precondition_failed`
+         */
         PreconditionFailed: {
             headers: {
                 [name: string]: unknown;
@@ -1596,8 +911,12 @@ export interface components {
                 "application/problem+json": components["schemas"]["Problem"];
             };
         };
-        /** @description 本文を変える PATCH に If-Match が無い */
-        PreconditionRequired: {
+        /**
+         * @description 本文が上限を超えた（JSON 6 MiB・multipart 16 MiB・同期 8 MiB・同期のアップロード 15 MiB）。テキストの本文が 4 MiB を超えたときは、本文の上限の内側でも 422 invalid_request になる
+         *
+         *     返る code：`payload_too_large`
+         */
+        PayloadTooLarge: {
             headers: {
                 [name: string]: unknown;
             };
@@ -1605,7 +924,24 @@ export interface components {
                 "application/problem+json": components["schemas"]["Problem"];
             };
         };
-        /** @description 内容を受け付けられない（編集の対象が無い・分割の上限・形式・同期の項目・アップロードの中身など）。code で見分ける */
+        /**
+         * @description Content-Type が、その操作の受け付ける形式でない。文書の作成に application/x-www-form-urlencoded で送ると、415 ではなく 400 になる
+         *
+         *     返る code：`unsupported_media_type`
+         */
+        UnsupportedMediaType: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/problem+json": components["schemas"]["Problem"];
+            };
+        };
+        /**
+         * @description 内容を受け付けられない（編集の対象・分割の上限・形式・同期の項目・アップロードの中身など）。code で見分ける
+         *
+         *     返る code：`invalid_request`・`edit_no_match`・`edit_ambiguous`・`not_editable`・`too_many_parts`・`invalid_item`・`upload_mismatch`
+         */
         Unprocessable: {
             headers: {
                 [name: string]: unknown;
@@ -1614,7 +950,24 @@ export interface components {
                 "application/problem+json": components["schemas"]["Problem"];
             };
         };
-        /** @description レート制限（鍵ごとに 1 分 120 回・同期は 1 分 10 回・組織の書き込みは 1 分 300 版）。Retry-After の秒数だけ待つ */
+        /**
+         * @description 本文を変える PATCH に If-Match が無い
+         *
+         *     返る code：`precondition_required`
+         */
+        PreconditionRequired: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/problem+json": components["schemas"]["Problem"];
+            };
+        };
+        /**
+         * @description 上限を超えた。Retry-After の秒数だけ待ってからやり直す。上限は、API キーごとに 1 分 120 回（REST と MCP で共通）・同期の実行は鍵ごとに 1 分 10 回（dry_run は数えない）・組織の文書の書き込みは 1 分 300 版・API キーの検証の失敗は IP ごとに 1 分 20 回（超えると、正しい鍵でも 429 になる）。このほか、IP ごとの上限を超えると Cloudflare が 429（error code 1015）を返す。この応答は problem+json でないことがあり、Retry-After が無ければ少し待ってからやり直す
+         *
+         *     返る code：`rate_limited`
+         */
         RateLimited: {
             headers: {
                 /** @description 待つ秒数 */
@@ -1625,7 +978,24 @@ export interface components {
                 "application/problem+json": components["schemas"]["Problem"];
             };
         };
-        /** @description 同期の途中で操作が失敗した。同じ一式で呼び直すと続きから実行する */
+        /**
+         * @description サーバーで問題が起きた。少し待ってからやり直す
+         *
+         *     返る code：`internal_error`
+         */
+        InternalServerError: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/problem+json": components["schemas"]["Problem"];
+            };
+        };
+        /**
+         * @description 同期の途中で操作が失敗した。同じ一式で呼び直すと、済んだ操作を除いて続きから実行する
+         *
+         *     返る code：`operation_failed`
+         */
         BadGateway: {
             headers: {
                 [name: string]: unknown;
@@ -1634,7 +1004,11 @@ export interface components {
                 "application/problem+json": components["schemas"]["Problem"];
             };
         };
-        /** @description 検索の準備中か、保存に失敗した。Retry-After の秒数だけ待つ */
+        /**
+         * @description 保存かキューへの送信に失敗した（storage_failed）。Retry-After の秒数だけ待ってからやり直す。search_unavailable は今の操作からは返らない（変換の口と MCP のために目録に残している）
+         *
+         *     返る code：`storage_failed`・`search_unavailable`
+         */
         ServiceUnavailable: {
             headers: {
                 /** @description 待つ秒数 */
@@ -1652,4 +1026,723 @@ export interface components {
     pathItems: never;
 }
 export type $defs = Record<string, never>;
-export type operations = Record<string, never>;
+export interface operations {
+    list_knowledge_sources: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 組織のソース（既定のソースが先頭） */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        sources: components["schemas"]["Source"][];
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            429: components["responses"]["RateLimited"];
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    get_knowledge_source: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                source_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description ソース */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Source"];
+                };
+            };
+            400: components["responses"]["InvalidRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            429: components["responses"]["RateLimited"];
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    sync_knowledge_source: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                source_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SyncRequest"];
+            };
+        };
+        responses: {
+            /** @description 計画と、実行した操作 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SyncResponse"];
+                };
+            };
+            400: components["responses"]["InvalidRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            409: components["responses"]["Conflict"];
+            413: components["responses"]["PayloadTooLarge"];
+            415: components["responses"]["UnsupportedMediaType"];
+            422: components["responses"]["Unprocessable"];
+            429: components["responses"]["RateLimited"];
+            500: components["responses"]["InternalServerError"];
+            502: components["responses"]["BadGateway"];
+        };
+    };
+    upload_knowledge_source_file: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                source_id: string;
+                /** @description ファイルの中身の SHA-256（16 進の小文字） */
+                sha256: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "text/plain": string;
+                "text/markdown": string;
+                "application/json": string;
+                "text/html": string;
+                "text/csv": string;
+                "application/pdf": string;
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document": string;
+            };
+        };
+        responses: {
+            /** @description 受け取り済み（何もしない） */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UploadAccepted"];
+                };
+            };
+            /** @description 受け取った */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UploadAccepted"];
+                };
+            };
+            400: components["responses"]["InvalidRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            409: components["responses"]["Conflict"];
+            411: components["responses"]["LengthRequired"];
+            413: components["responses"]["PayloadTooLarge"];
+            415: components["responses"]["UnsupportedMediaType"];
+            422: components["responses"]["Unprocessable"];
+            429: components["responses"]["RateLimited"];
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    list_knowledge_folders: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 組織のフォルダ */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        folders: components["schemas"]["Folder"][];
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            429: components["responses"]["RateLimited"];
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    list_knowledge_documents: {
+        parameters: {
+            query?: {
+                source_id?: string;
+                folder_id?: string;
+                /** @description source_id と一緒のときだけ指定できる */
+                external_id?: string;
+                status?: "processing" | "pending" | "ready" | "error";
+                /** @description 前の応答の next_cursor */
+                cursor?: string;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 文書の 1 ページ */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        documents: components["schemas"]["Document"][];
+                        next_cursor: string | null;
+                    };
+                };
+            };
+            400: components["responses"]["InvalidRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            429: components["responses"]["RateLimited"];
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    create_knowledge_document: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["CreateDocument"];
+                "multipart/form-data": components["schemas"]["CreateDocumentMultipart"];
+            };
+        };
+        responses: {
+            /** @description 同じ外部 ID・同じ内容の文書が既にあった */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DocumentAccepted"];
+                };
+            };
+            /** @description 受け付けた。反映の状態は Location の文書で確かめる */
+            202: {
+                headers: {
+                    /** @description 文書の URL */
+                    Location?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DocumentAccepted"];
+                };
+            };
+            400: components["responses"]["InvalidRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            409: components["responses"]["Conflict"];
+            413: components["responses"]["PayloadTooLarge"];
+            415: components["responses"]["UnsupportedMediaType"];
+            422: components["responses"]["Unprocessable"];
+            429: components["responses"]["RateLimited"];
+            500: components["responses"]["InternalServerError"];
+            503: components["responses"]["ServiceUnavailable"];
+        };
+    };
+    get_knowledge_document: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 文書 */
+            200: {
+                headers: {
+                    /** @description "<版の ID>"。If-Match にそのまま入れる */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Document"];
+                };
+            };
+            400: components["responses"]["InvalidRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            429: components["responses"]["RateLimited"];
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    delete_knowledge_document: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description GET で受け取った ETag（"<版の ID>"）。強い比較の 1 つの値だけを受ける */
+                "if-match"?: string;
+            };
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 削除を受け付けた */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeleteResult"];
+                };
+            };
+            400: components["responses"]["InvalidRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            409: components["responses"]["Conflict"];
+            412: components["responses"]["PreconditionFailed"];
+            422: components["responses"]["Unprocessable"];
+            429: components["responses"]["RateLimited"];
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    update_knowledge_document: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description GET で受け取った ETag（"<版の ID>"）。強い比較の 1 つの値だけを受ける */
+                "if-match"?: string;
+            };
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PatchDocument"];
+            };
+        };
+        responses: {
+            /** @description フォルダ・ソースを変えた（文書を返す）。本文が同じで版を作らなかったときは DocumentAccepted（created: false） */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Document"] | components["schemas"]["DocumentAccepted"];
+                };
+            };
+            /** @description 本文の変更を受け付けた */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DocumentAccepted"];
+                };
+            };
+            400: components["responses"]["InvalidRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            409: components["responses"]["Conflict"];
+            412: components["responses"]["PreconditionFailed"];
+            413: components["responses"]["PayloadTooLarge"];
+            415: components["responses"]["UnsupportedMediaType"];
+            422: components["responses"]["Unprocessable"];
+            428: components["responses"]["PreconditionRequired"];
+            429: components["responses"]["RateLimited"];
+            500: components["responses"]["InternalServerError"];
+            503: components["responses"]["ServiceUnavailable"];
+        };
+    };
+    get_knowledge_document_content: {
+        parameters: {
+            query?: {
+                /** @description 無ければ公開中の版 */
+                revision_id?: string;
+            };
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 原本のバイト列（Content-Disposition: attachment） */
+            200: {
+                headers: {
+                    /** @description "<版の ID>"。If-Match にそのまま入れる */
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/octet-stream": string;
+                };
+            };
+            400: components["responses"]["InvalidRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            429: components["responses"]["RateLimited"];
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    list_knowledge_document_revisions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 版の一覧 */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        revisions: components["schemas"]["Revision"][];
+                    };
+                };
+            };
+            400: components["responses"]["InvalidRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            429: components["responses"]["RateLimited"];
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    upsert_knowledge_document: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description GET で受け取った ETag（"<版の ID>"）。強い比較の 1 つの値だけを受ける */
+                "if-match"?: string;
+            };
+            path: {
+                source_id: string;
+                /** @description encodeURIComponent で符号化して送る（faq/shipping は faq%2Fshipping）。サーバーは復号した値を検査する */
+                external_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpsertDocument"];
+            };
+        };
+        responses: {
+            /** @description 内容が同じで、何も変えなかった */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UpsertResult"];
+                };
+            };
+            /** @description 作成か更新を受け付けた */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UpsertResult"];
+                };
+            };
+            400: components["responses"]["InvalidRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            409: components["responses"]["Conflict"];
+            412: components["responses"]["PreconditionFailed"];
+            413: components["responses"]["PayloadTooLarge"];
+            415: components["responses"]["UnsupportedMediaType"];
+            422: components["responses"]["Unprocessable"];
+            429: components["responses"]["RateLimited"];
+            500: components["responses"]["InternalServerError"];
+            503: components["responses"]["ServiceUnavailable"];
+        };
+    };
+    restore_knowledge_document_revision: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description GET で受け取った ETag（"<版の ID>"）。強い比較の 1 つの値だけを受ける */
+                "if-match"?: string;
+            };
+            path: {
+                document_id: string;
+                revision_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 今の版と同じ内容で、版を作らなかった */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DocumentAccepted"];
+                };
+            };
+            /** @description 新しい版を受け付けた */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DocumentAccepted"];
+                };
+            };
+            400: components["responses"]["InvalidRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            409: components["responses"]["Conflict"];
+            412: components["responses"]["PreconditionFailed"];
+            422: components["responses"]["Unprocessable"];
+            429: components["responses"]["RateLimited"];
+            500: components["responses"]["InternalServerError"];
+            503: components["responses"]["ServiceUnavailable"];
+        };
+    };
+    retry_knowledge_document: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 取り込み直しを受け付けた */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RetryResult"];
+                };
+            };
+            400: components["responses"]["InvalidRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            409: components["responses"]["Conflict"];
+            422: components["responses"]["Unprocessable"];
+            429: components["responses"]["RateLimited"];
+            500: components["responses"]["InternalServerError"];
+            503: components["responses"]["ServiceUnavailable"];
+        };
+    };
+    list_knowledge_drafts: {
+        parameters: {
+            query?: {
+                state?: "open" | "published" | "discarded";
+                target_document_id?: string;
+                /** @description 前の応答の next_cursor */
+                cursor?: string;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 下書きの 1 ページ */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        drafts: components["schemas"]["Draft"][];
+                        next_cursor: string | null;
+                    };
+                };
+            };
+            400: components["responses"]["InvalidRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            429: components["responses"]["RateLimited"];
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    create_knowledge_draft: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateDraft"];
+            };
+        };
+        responses: {
+            /** @description 作った下書き */
+            201: {
+                headers: {
+                    /** @description 作った下書きの URL */
+                    Location?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Draft"];
+                };
+            };
+            400: components["responses"]["InvalidRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            409: components["responses"]["Conflict"];
+            412: components["responses"]["PreconditionFailed"];
+            413: components["responses"]["PayloadTooLarge"];
+            415: components["responses"]["UnsupportedMediaType"];
+            422: components["responses"]["Unprocessable"];
+            429: components["responses"]["RateLimited"];
+            500: components["responses"]["InternalServerError"];
+            503: components["responses"]["ServiceUnavailable"];
+        };
+    };
+    get_knowledge_draft: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                draft_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 下書き */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Draft"];
+                };
+            };
+            400: components["responses"]["InvalidRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            429: components["responses"]["RateLimited"];
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    discard_knowledge_draft: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                draft_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 破棄した */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DiscardResult"];
+                };
+            };
+            400: components["responses"]["InvalidRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            409: components["responses"]["Conflict"];
+            429: components["responses"]["RateLimited"];
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    get_knowledge_draft_content: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                draft_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description 提案の本文（Content-Disposition: attachment） */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/octet-stream": string;
+                };
+            };
+            400: components["responses"]["InvalidRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            429: components["responses"]["RateLimited"];
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+}
