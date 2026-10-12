@@ -1,6 +1,6 @@
 {
   "name": "@leafchat/cli",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Sync a folder of documents to leafchat knowledge (CLI and GitHub Action).",
   "license": "MIT",
   "type": "module",
@@ -21,16 +21,23 @@
     "type": "git",
     "url": "git+https://github.com/leafchat/cli.git"
   },
-  "homepage": "https://github.com/leafchat/cli#readme",
+  "homepage": "https://leafchat.app",
   "bugs": {
     "url": "https://github.com/leafchat/cli/issues"
   },
   "keywords": [
     "leafchat",
     "knowledge",
+    "knowledge-base",
     "sync",
     "cli",
-    "github-action"
+    "github-action",
+    "github-actions",
+    "docs-as-code",
+    "markdown",
+    "rag",
+    "chatbot",
+    "customer-support"
   ],
   "publishConfig": {
     "access": "public"
