@@ -1,6 +1,6 @@
 {
   "name": "@leafchat/cli",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Sync a folder of documents to leafchat knowledge (CLI and GitHub Action).",
   "license": "MIT",
   "type": "module",
