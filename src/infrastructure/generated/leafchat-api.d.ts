@@ -579,6 +579,7 @@ export interface components {
             created_at: string;
             /**
              * Format: date-time
+             * @description 内容の更新日時。公開中の版（無ければ head_revision）の内容を受け付けた時刻。フォルダの移動・状態の変化・システムの取り込み直しでは変わらない
              * @example 2026-09-29T02:31:07.000Z
              */
             updated_at: string;
