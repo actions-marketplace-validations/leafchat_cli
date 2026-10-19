@@ -622,8 +622,10 @@ export interface components {
         DocumentAccepted: {
             document_id: string;
             revision_id: string;
-            /** @description 新しい文書（POST）か新しい版（PATCH・復元）を作ったか。同じ内容なら false で、状態は 200 */
+            /** @description 新しい文書（POST）か新しい版（PATCH・復元・POST の上書き）を作ったか。同じ内容なら false で、状態は 200 */
             created: boolean;
+            /** @description POST だけ。同じフォルダに同じ名前の文書があり、新しく作らずにその文書を上書きしたら true（状態は 200、document_id はその文書）。外部 ID つきの作成は名前で照合しない */
+            replaced?: boolean;
         };
         CreateDocument: {
             source_id?: string;
@@ -875,7 +877,7 @@ export interface components {
         /**
          * @description 今の状態と合わない。code で見分ける
          *
-         *     返る code：`source_locked`・`limit_exceeded`・`delete_limit_exceeded`・`folder_not_found`・`folder_limit_exceeded`・`upload_required`・`upload_not_expected`・`sync_in_progress`・`not_sync_source`・`external_id_taken`・`draft_limit_exceeded`・`already_decided`・`not_retryable`
+         *     返る code：`source_locked`・`limit_exceeded`・`delete_limit_exceeded`・`folder_not_found`・`folder_limit_exceeded`・`upload_required`・`upload_not_expected`・`sync_in_progress`・`not_sync_source`・`same_name_exists`・`external_id_taken`・`draft_limit_exceeded`・`already_decided`・`not_retryable`
          */
         Conflict: {
             headers: {
