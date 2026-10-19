@@ -16,3 +16,10 @@ updates:
     groups:
       development:
         dependency-type: development
+    ignore:
+      # Why 7 に上げないか: dependency-cruiser（18.5.0）は TypeScript 7 を読めず、0 モジュールのまま成功で終わる（import の境界の検査が空振りする）。dependency-cruiser が対応したら外す。
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
+      # Why 型の版を据え置くか: 実際に動く Node（Action の node24・.node-version）に型を揃え、それに無い API を型検査で拾う。動かす Node を上げるときに一緒に上げる。
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
