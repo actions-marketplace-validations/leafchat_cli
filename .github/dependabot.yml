@@ -7,6 +7,11 @@ updates:
     # Why 7 日待つか: 公開の直後に乗っ取られた版へ上げない（zizmor の推奨）。
     cooldown:
       default-days: 7
+    groups:
+      # Why まとめるか: CodeQL は同じ workflow の init と analyze が同じ版でないと analyze が失敗する。別々の PR では、どれも CI が通らない。
+      codeql-action:
+        patterns:
+          - "github/codeql-action*"
   - package-ecosystem: npm
     directory: /
     schedule:
@@ -16,3 +21,10 @@ updates:
     groups:
       development:
         dependency-type: development
+    ignore:
+      # Why 7 に上げないか: dependency-cruiser（18.5.0）は TypeScript 7 を読めず、0 モジュールのまま成功で終わる（import の境界の検査が空振りする）。dependency-cruiser が対応したら外す。
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
+      # Why 型の版を据え置くか: 実際に動く Node（Action の node24・.node-version）に型を揃え、それに無い API を型検査で拾う。動かす Node を上げるときに一緒に上げる。
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]

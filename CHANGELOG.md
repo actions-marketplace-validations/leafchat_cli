@@ -2,6 +2,13 @@
 
 この CLI と GitHub Action の変更点です。書き方は [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/)、版の付け方は [Semantic Versioning](https://semver.org/lang/ja/) に従います。
 
+## [1.0.3] - 2026-10-19
+
+### Changed
+
+- CLI と Action に束ねている zod を 4.6.5 から 4.6.6 に上げた
+- leafchat の API の型を、今の仕様書から作り直した。コマンドと Action の動きは変わらない
+
 ## [1.0.2] - 2026-10-12
 
 ### Changed
