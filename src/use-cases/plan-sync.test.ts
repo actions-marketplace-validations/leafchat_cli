@@ -109,7 +109,7 @@ describe("計画（plan）", () => {
       fakeTree([
         { path: "共通/営業時間.md", content: "# 営業時間\n" },
         { path: "共通/料金表.pdf", content: "%PDF-1.7", sha256: PDF_SHA },
-        { path: "共通/料金表.xlsx", content: "PK" },
+        { path: "共通/料金表.key", content: "PK" },
       ]),
       api.api,
     );
@@ -125,8 +125,8 @@ describe("計画（plan）", () => {
           {
             code: "unsupported_format",
             severity: "warning",
-            path: "共通/料金表.xlsx",
-            detail: "xlsx",
+            path: "共通/料金表.key",
+            detail: "key",
           },
         ],
         inlineSkipped: [],

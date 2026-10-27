@@ -32,6 +32,16 @@ var FILENAME_MAX_CHARS = 40;
 var FOLDER_NAME_MAX_CHARS = 60;
 var TEXT_MAX_BYTES = 4 * 1024 * 1024;
 var RICH_MAX_BYTES = 15 * 1024 * 1024;
+var PDF_MAX_BYTES = 20 * 1024 * 1024;
+var XLSX_MAX_BYTES = 5 * 1024 * 1024;
+var PPTX_MAX_BYTES = 20 * 1024 * 1024;
+var LARGEST_MAX_BYTES = Math.max(
+  TEXT_MAX_BYTES,
+  RICH_MAX_BYTES,
+  PDF_MAX_BYTES,
+  XLSX_MAX_BYTES,
+  PPTX_MAX_BYTES
+);
 
 // src/domain/order.ts
 var ascending = (a, b) => a < b ? -1 : a > b ? 1 : 0;
@@ -63,7 +73,7 @@ function createFsTreeReader(params) {
   async function regularFile(originalPath) {
     const path = join(root, originalPath);
     const info2 = await lstat(path);
-    if (!info2.isFile() || info2.size > RICH_MAX_BYTES) {
+    if (!info2.isFile() || info2.size > LARGEST_MAX_BYTES) {
       throw new Error(
         `${originalPath} \u3092\u8AAD\u3081\u307E\u305B\u3093\uFF08\u666E\u901A\u306E\u30D5\u30A1\u30A4\u30EB\u3067\u306A\u3044\u304B\u3001\u5927\u304D\u3059\u304E\u307E\u3059\uFF09\u3002`
       );
@@ -20812,11 +20822,11 @@ function findingText(finding) {
     case "filename":
       return `${at}\u30D5\u30A1\u30A4\u30EB\u540D\u300C${detail ?? ""}\u300D\u304C 40 \u6587\u5B57\u3092\u8D85\u3048\u307E\u3059\uFF08\u56DE\u7B54\u306E\u51FA\u5178\u306B\u51FA\u308B\u305F\u3081\uFF09\u3002\u77ED\u304F\u3057\u3066\u304F\u3060\u3055\u3044\u3002`;
     case "unsupported_format":
-      return `${at}\u5BFE\u5FDC\u3057\u306A\u3044\u5F62\u5F0F${detail === null ? "" : `\uFF08.${detail}\uFF09`}\u306E\u305F\u3081\u9001\u308A\u307E\u305B\u3093\u3002\u5BFE\u5FDC\u3059\u308B\u5F62\u5F0F\u306F md\u30FBtxt\u30FBjson\u30FBhtml\u30FBcsv\u30FBpdf\u30FBdocx \u3067\u3059\u3002`;
+      return `${at}\u5BFE\u5FDC\u3057\u306A\u3044\u5F62\u5F0F${detail === null ? "" : `\uFF08.${detail}\uFF09`}\u306E\u305F\u3081\u9001\u308A\u307E\u305B\u3093\u3002\u5BFE\u5FDC\u3059\u308B\u5F62\u5F0F\u306F md\u30FBtxt\u30FBjson\u30FBhtml\u30FBcsv\u30FBpdf\u30FBdocx\u30FBxlsx\u30FBpptx \u3067\u3059\u3002`;
     case "empty_file":
       return `${at}\u7A7A\u306E\u30D5\u30A1\u30A4\u30EB\u3067\u3059\u3002\u4E2D\u8EAB\u3092\u5165\u308C\u308B\u304B\u3001\u6D88\u3057\u3066\u304F\u3060\u3055\u3044\u3002`;
     case "too_large":
-      return `${at}\u30D5\u30A1\u30A4\u30EB\u304C\u5927\u304D\u3059\u304E\u307E\u3059\uFF08${Math.floor(Number(detail ?? RICH_MAX_BYTES) / MIB)} MB \u307E\u3067\uFF09\u3002\u5206\u3051\u308B\u304B\u5C0F\u3055\u304F\u3057\u3066\u304F\u3060\u3055\u3044\u3002`;
+      return `${at}\u30D5\u30A1\u30A4\u30EB\u304C\u5927\u304D\u3059\u304E\u307E\u3059\uFF08${Math.floor(Number(detail ?? LARGEST_MAX_BYTES) / MIB)} MB \u307E\u3067\uFF09\u3002\u5206\u3051\u308B\u304B\u5C0F\u3055\u304F\u3057\u3066\u304F\u3060\u3055\u3044\u3002`;
     case "lfs_pointer":
       return `${at}Git LFS \u306E\u30DD\u30A4\u30F3\u30BF\u30D5\u30A1\u30A4\u30EB\u3067\u3059\u3002actions/checkout \u306B lfs: true \u3092\u4ED8\u3051\u308B\u304B\u3001git lfs pull \u3067\u5B9F\u4F53\u3092\u53D6\u3063\u3066\u304F\u3060\u3055\u3044\u3002`;
     case "not_utf8":
@@ -21179,7 +21189,7 @@ function appliedText(counts) {
 }
 
 // src/cli/version.ts
-var CLI_VERSION = true ? "1.0.3" : "0.0.0-dev";
+var CLI_VERSION = true ? "1.1.0" : "0.0.0-dev";
 
 // src/infrastructure/ci-env.ts
 var REPOSITORY_PATTERN2 = /^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/;
@@ -21271,6 +21281,14 @@ var FORMATS = [
   {
     mime: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     ext: ["docx"]
+  },
+  {
+    mime: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    ext: ["xlsx"]
+  },
+  {
+    mime: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    ext: ["pptx"]
   }
 ];
 var extensionOf = (filename) => {
@@ -21282,7 +21300,17 @@ function mimeOfFilename(filename) {
   return FORMATS.find((format) => format.ext.includes(ext))?.mime ?? null;
 }
 var isTextMime = (mime) => mime === "text/plain" || mime === "text/markdown" || mime === "application/json";
-var maxBytesOf = (mime) => isTextMime(mime) ? TEXT_MAX_BYTES : RICH_MAX_BYTES;
+var maxBytesOf = (mime) => {
+  if (isTextMime(mime)) return TEXT_MAX_BYTES;
+  if (mime === "application/pdf") return PDF_MAX_BYTES;
+  if (mime === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+    return XLSX_MAX_BYTES;
+  }
+  if (mime === "application/vnd.openxmlformats-officedocument.presentationml.presentation") {
+    return PPTX_MAX_BYTES;
+  }
+  return RICH_MAX_BYTES;
+};
 
 // src/domain/lfs-pointer.ts
 var POINTER_PREFIX = new TextEncoder().encode(
@@ -21381,7 +21409,7 @@ function checkEntry(entry) {
         return error63("folder_name", path, topFolderOf(path));
       case "filename":
         return error63("filename", path, path.split("/").at(-1) ?? path);
-      // Why 止めずに外すか: 対応しない形式（画像・表計算など）を同じフォルダに置く運用を妨げない。
+      // Why 止めずに外すか: 対応しない形式（画像・pptx など）を同じフォルダに置く運用を妨げない。
       case "extension":
         return {
           code: "unsupported_format",

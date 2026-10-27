@@ -1,4 +1,4 @@
-import { RICH_MAX_BYTES } from "./limits.ts";
+import { LARGEST_MAX_BYTES } from "./limits.ts";
 import type { Finding } from "./local-check.ts";
 import type {
   SyncExecuted,
@@ -100,11 +100,11 @@ export function findingText(finding: Finding): string {
     case "filename":
       return `${at}ファイル名「${detail ?? ""}」が 40 文字を超えます（回答の出典に出るため）。短くしてください。`;
     case "unsupported_format":
-      return `${at}対応しない形式${detail === null ? "" : `（.${detail}）`}のため送りません。対応する形式は md・txt・json・html・csv・pdf・docx です。`;
+      return `${at}対応しない形式${detail === null ? "" : `（.${detail}）`}のため送りません。対応する形式は md・txt・json・html・csv・pdf・docx・xlsx・pptx です。`;
     case "empty_file":
       return `${at}空のファイルです。中身を入れるか、消してください。`;
     case "too_large":
-      return `${at}ファイルが大きすぎます（${Math.floor(Number(detail ?? RICH_MAX_BYTES) / MIB)} MB まで）。分けるか小さくしてください。`;
+      return `${at}ファイルが大きすぎます（${Math.floor(Number(detail ?? LARGEST_MAX_BYTES) / MIB)} MB まで）。分けるか小さくしてください。`;
     case "lfs_pointer":
       return `${at}Git LFS のポインタファイルです。actions/checkout に lfs: true を付けるか、git lfs pull で実体を取ってください。`;
     case "not_utf8":

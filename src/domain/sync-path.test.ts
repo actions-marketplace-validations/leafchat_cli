@@ -77,8 +77,8 @@ describe("同期のパスの規則", () => {
       error: "folder_name",
     },
     {
-      label: "対応しない拡張子（.xlsx）",
-      path: "料金表.xlsx",
+      label: "対応しない拡張子（.key）",
+      path: "料金表.key",
       error: "extension",
     },
     {

@@ -30,8 +30,13 @@ describe("送る前の検査", () => {
       finding: { code: "too_large", severity: "error", detail: "4194304" },
     },
     {
-      label: "PDF の上限（15 MiB）を 1 バイト超えるファイル",
-      entry: localEntry({ path: "共通/料金表.pdf", size: 15_728_641 }),
+      label: "PDF の上限（20 MiB）を 1 バイト超えるファイル",
+      entry: localEntry({ path: "共通/料金表.pdf", size: 20_971_521 }),
+      finding: { code: "too_large", severity: "error", detail: "20971520" },
+    },
+    {
+      label: "Word の上限（15 MiB）を 1 バイト超えるファイル",
+      entry: localEntry({ path: "共通/案内.docx", size: 15_728_641 }),
       finding: { code: "too_large", severity: "error", detail: "15728640" },
     },
     {
@@ -54,12 +59,12 @@ describe("送る前の検査", () => {
       finding: { code: "path_depth", severity: "error", detail: "a" },
     },
     {
-      label: "対応しない拡張子（.xlsx）",
-      entry: localEntry({ path: "共通/料金表.xlsx" }),
+      label: "対応しない拡張子（.key）",
+      entry: localEntry({ path: "共通/料金表.key" }),
       finding: {
         code: "unsupported_format",
         severity: "warning",
-        detail: "xlsx",
+        detail: "key",
       },
     },
     {
@@ -99,6 +104,68 @@ describe("送る前の検査", () => {
       ],
       findings: [],
     });
+  });
+
+  test("xlsx は、xlsx の形式で送る対象に入る", () => {
+    const result = checkLocalEntries([
+      localEntry({ path: "共通/料金表.xlsx" }),
+    ]);
+
+    expect(result).toEqual({
+      files: [
+        {
+          ...localEntry({ path: "共通/料金表.xlsx" }),
+          mime: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        },
+      ],
+      findings: [],
+    });
+  });
+
+  test("xlsx の上限（5 MiB）を 1 バイト超えるファイルは too_large", () => {
+    const result = checkLocalEntries([
+      localEntry({ path: "共通/料金表.xlsx", size: 5_242_881 }),
+    ]);
+
+    expect(result.findings).toEqual([
+      {
+        code: "too_large",
+        severity: "error",
+        path: "共通/料金表.xlsx",
+        detail: "5242880",
+      },
+    ]);
+  });
+
+  test("pptx は、pptx の形式で送る対象に入る", () => {
+    const result = checkLocalEntries([
+      localEntry({ path: "共通/説明資料.pptx" }),
+    ]);
+
+    expect(result).toEqual({
+      files: [
+        {
+          ...localEntry({ path: "共通/説明資料.pptx" }),
+          mime: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        },
+      ],
+      findings: [],
+    });
+  });
+
+  test("pptx の上限（20 MiB）を 1 バイト超えるファイルは too_large", () => {
+    const result = checkLocalEntries([
+      localEntry({ path: "共通/説明資料.pptx", size: 20_971_521 }),
+    ]);
+
+    expect(result.findings).toEqual([
+      {
+        code: "too_large",
+        severity: "error",
+        path: "共通/説明資料.pptx",
+        detail: "20971520",
+      },
+    ]);
   });
 
   test("「料金表 2026.pdf」と「料金表_2026.pdf」が同じフォルダにあると duplicate になる", () => {
@@ -164,13 +231,10 @@ describe("送る前の検査", () => {
 
   test("検査の結果は、パスの昇順に並ぶ", () => {
     const result = checkLocalEntries([
-      localEntry({ path: "b/x.xlsx" }),
+      localEntry({ path: "b/x.key" }),
       localEntry({ path: "a/1/2.md" }),
     ]);
 
-    expect(result.findings.map((f) => f.path)).toEqual([
-      "a/1/2.md",
-      "b/x.xlsx",
-    ]);
+    expect(result.findings.map((f) => f.path)).toEqual(["a/1/2.md", "b/x.key"]);
   });
 });
