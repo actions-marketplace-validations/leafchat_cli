@@ -111,7 +111,7 @@ type Deps = {
   progress: (event: ProgressEvent) => void;
 };
 
-// Why 4 並列か: 1 件 15 MB まで。並べすぎると手元の回線とメモリを使い切り、1 つずつでは 500 件の PDF に時間がかかりすぎる。
+// Why 4 並列か: 1 件 20 MB（PDF）まで。並べすぎると手元の回線とメモリを使い切り、1 つずつでは 500 件の PDF に時間がかかりすぎる。
 const UPLOAD_CONCURRENCY = 4;
 // Why 15 秒か: leafchat の取込の照合は毎分。鍵ごとの要求の上限の内に十分に収まる。
 const POLL_INTERVAL_MS = 15_000;
