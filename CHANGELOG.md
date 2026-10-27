@@ -2,6 +2,17 @@
 
 この CLI と GitHub Action の変更点です。書き方は [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/)、版の付け方は [Semantic Versioning](https://semver.org/lang/ja/) に従います。
 
+## [1.1.0] - 2026-10-27
+
+### Added
+
+- `xlsx`（Excel）を同期できるようにした。上限は 5 MB
+- `pptx`（PowerPoint）を同期できるようにした。上限は 20 MB
+
+### Changed
+
+- PDF の上限を 15 MB から 20 MB にした（docx・html・csv は 15 MB のまま）
+
 ## [1.0.3] - 2026-10-19
 
 ### Changed
