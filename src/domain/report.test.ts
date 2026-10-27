@@ -370,7 +370,7 @@ describe("送る前の検査の Markdown", () => {
         "",
         "```text",
         "x 渋谷店/メニュー/ランチ.pdf：フォルダは 1 階層までです。「渋谷店」の直下へ移してください。",
-        "! 共通/写真.png：対応しない形式（.png）のため送りません。対応する形式は md・txt・json・html・csv・pdf・docx です。",
+        "! 共通/写真.png：対応しない形式（.png）のため送りません。対応する形式は md・txt・json・html・csv・pdf・docx・xlsx・pptx です。",
         "```",
         "",
       ].join("\n"),

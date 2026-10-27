@@ -74,7 +74,7 @@ function checkEntry(
         return error("folder_name", path, topFolderOf(path));
       case "filename":
         return error("filename", path, path.split("/").at(-1) ?? path);
-      // Why 止めずに外すか: 対応しない形式（画像・表計算など）を同じフォルダに置く運用を妨げない。
+      // Why 止めずに外すか: 対応しない形式（画像・pptx など）を同じフォルダに置く運用を妨げない。
       case "extension":
         return {
           code: "unsupported_format",

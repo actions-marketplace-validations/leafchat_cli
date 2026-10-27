@@ -3,7 +3,7 @@ import { createReadStream } from "node:fs";
 import { lstat, open, opendir, readFile, stat } from "node:fs/promises";
 import { join, relative, sep } from "node:path";
 import { pipeline } from "node:stream/promises";
-import { RICH_MAX_BYTES } from "../domain/limits.ts";
+import { LARGEST_MAX_BYTES } from "../domain/limits.ts";
 import type { LocalEntry } from "../domain/local-check.ts";
 import { ascending } from "../domain/order.ts";
 
@@ -56,7 +56,7 @@ export function createFsTreeReader(params: { root: string }): TreeReader {
   async function regularFile(originalPath: string): Promise<string> {
     const path = join(root, originalPath);
     const info = await lstat(path);
-    if (!info.isFile() || info.size > RICH_MAX_BYTES) {
+    if (!info.isFile() || info.size > LARGEST_MAX_BYTES) {
       throw new Error(
         `${originalPath} を読めません（普通のファイルでないか、大きすぎます）。`,
       );

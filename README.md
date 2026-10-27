@@ -1,6 +1,6 @@
 # @leafchat/cli
 
-フォルダに置いた資料（Markdown・PDF・Word など）を、[leafchat](https://leafchat.app) のナレッジに同期するコマンドと GitHub Action です。置いた場所がそのまま leafchat のフォルダになります。どの CI からも、手元からも使えます。GitHub では、pull request に計画をコメントし、`main` への push で反映する Action を使えます（[GitHub Action](#github-action)）。
+フォルダに置いた資料（Markdown・PDF・Word・Excel など）を、[leafchat](https://leafchat.app) のナレッジに同期するコマンドと GitHub Action です。置いた場所がそのまま leafchat のフォルダになります。どの CI からも、手元からも使えます。GitHub では、pull request に計画をコメントし、`main` への push で反映する Action を使えます（[GitHub Action](#github-action)）。
 
 leafchat は、サイトに設置する AI サポートチャットです。登録した資料をもとに AI が訪問者の質問に答え、答えられなかった質問は担当者が会話を引き継ぎます。資料を Git で管理すると、変更を pull request で確かめてから AI の回答に反映できます。
 
@@ -36,11 +36,14 @@ knowledge/
 | 形式 | 拡張子 | 大きさ |
 | --- | --- | --- |
 | テキスト | `md`・`markdown`・`txt`・`text`・`log`・`json` | 4 MB まで |
-| その他 | `pdf`・`docx`・`html`・`htm`・`csv` | 15 MB まで |
+| PDF | `pdf` | 20 MB まで |
+| その他 | `docx`・`html`・`htm`・`csv` | 15 MB まで |
+| Excel | `xlsx` | 5 MB まで |
+| PowerPoint | `pptx` | 20 MB まで |
 
 - ファイル名は 40 文字まで（回答の出典に出るため）、フォルダ名は 60 文字までです
 - 1 つのソースに送れるファイルは 500 件までです
-- 対応しない形式（画像・表計算など）は、注意を出して送らずに続けます
+- 対応しない形式（画像など）は、注意を出して送らずに続けます
 - テキスト（md・txt・json）は UTF-8 で保存してください
 
 ## API キーの用意

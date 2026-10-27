@@ -51,7 +51,7 @@ export interface paths {
          * 同期のソースに一式を送る
          * @description 送った一式と、ソースの今の文書を external_id で突き合わせ、作成・更新・名前の変更・移動・削除を計画して実行する。一式は items か files のどちらか一方で送る。
          *
-         *     files の項目は、テキスト（md・txt・json）なら本文（content）ごと、それ以外（html・csv・pdf・docx。テキストも可）は参照（sha256・size・content_type）で送る。参照の項目は計画の uploads_required に出たファイルを PUT …/uploads/{sha256} で上げてから実行する。足りないまま実行すると 409 upload_required になる。参照の項目の作成・更新は 1 回の実行で 10 件まで（残りは remaining）。
+         *     files の項目は、テキスト（md・txt・json）なら本文（content）ごと、それ以外（html・csv・pdf・docx・xlsx・pptx。テキストも可）は参照（sha256・size・content_type）で送る。参照の項目は計画の uploads_required に出たファイルを PUT …/uploads/{sha256} で上げてから実行する。足りないまま実行すると 409 upload_required になる。参照の項目の作成・更新は 1 回の実行で 10 件まで（残りは remaining）。
          *
          *     files で送ると、パスの最初の階層をフォルダ、最後をファイル名として扱う（2 階層まで）。leafchat に無いフォルダは、サイトごとにナレッジを分けていない組織なら実行のときに作り、分けている組織では 409 folder_not_found で止める。client には送り手の名前・版・CI・実行の URL を入れる。ダッシュボードのソースの画面に出る。
          *
@@ -137,7 +137,7 @@ export interface paths {
          *
          *     source_id を省くと既定のソースに入る。同じ external_id で同じ内容をもう一度送ると、作らずに 200 で既存を返す。
          *
-         *     本文の上限は JSON 6 MiB・multipart 16 MiB。テキストは分割の上限が先に効き、実際は約 1.5 MiB まで。
+         *     本文の上限は JSON 6 MiB・multipart 21 MiB。テキストは分割の上限が先に効き、実際は約 1.5 MiB まで。
          */
         post: operations["create_knowledge_document"];
         delete?: never;
@@ -525,10 +525,10 @@ export interface components {
              * @example 9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08
              */
             sha256: string;
-            /** @description バイト数。形式ごとの上限（テキスト 4 MiB・その他 15 MiB）まで */
+            /** @description バイト数。形式ごとの上限（PDF 20 MiB・docx / html / csv 15 MiB・xlsx 5 MiB・pptx 20 MiB・テキスト 4 MiB）まで */
             size: number;
             /** @enum {string} */
-            content_type: "text/plain" | "text/markdown" | "application/json" | "text/html" | "text/csv" | "application/pdf" | "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+            content_type: "text/plain" | "text/markdown" | "application/json" | "text/html" | "text/csv" | "application/pdf" | "application/vnd.openxmlformats-officedocument.wordprocessingml.document" | "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" | "application/vnd.openxmlformats-officedocument.presentationml.presentation";
         };
         SyncClient: {
             name: string;
@@ -915,7 +915,7 @@ export interface components {
             };
         };
         /**
-         * @description 本文が上限を超えた（JSON 6 MiB・multipart 16 MiB・同期 8 MiB・同期のアップロード 15 MiB）。テキストの本文が 4 MiB を超えたときは、本文の上限の内側でも 422 invalid_request になる
+         * @description 本文が上限を超えた（JSON 6 MiB・multipart 21 MiB・同期 8 MiB・同期のアップロード 20 MiB）。テキストの本文が 4 MiB を超えたときは、本文の上限の内側でも 422 invalid_request になる
          *
          *     返る code：`payload_too_large`
          */
@@ -1141,6 +1141,8 @@ export interface operations {
                 "text/csv": string;
                 "application/pdf": string;
                 "application/vnd.openxmlformats-officedocument.wordprocessingml.document": string;
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": string;
+                "application/vnd.openxmlformats-officedocument.presentationml.presentation": string;
             };
         };
         responses: {
